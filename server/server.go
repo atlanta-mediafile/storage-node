@@ -7,8 +7,6 @@ import (
 	"mediafile/storage_node/utils"
 
 	"github.com/google/uuid"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type FileServiceServer struct {
@@ -42,5 +40,13 @@ func (s *FileServiceServer) UploadSingleFile(context context.Context, request *p
 }
 
 func (s *FileServiceServer) DeleteSingleFile(context context.Context, request *pb.DeleteSingleFileRequest) (*pb.DeleteSingleFileResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteSingleFile not implemented")
+
+	err := utils.DeleteFile(s.node.StorageLocation, request.FileId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.DeleteSingleFileResponse{
+		Done: true,
+	}, nil
 }
