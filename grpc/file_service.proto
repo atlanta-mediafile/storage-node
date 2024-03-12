@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "mediafile/grpc/file_service/fileservice";
+option go_package = "mediafile/storage_node/grpc/file_service/fileservice";
 option java_package = "com.mediafile.service.classes.generated.grpc";
 
 package fileservice;
