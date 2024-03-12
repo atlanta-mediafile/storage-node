@@ -27,15 +27,32 @@ jobs:
 
     - name: Run tests
       run: go test -v ./...
-
-  merge:
+      
+  version:
     runs-on: ubuntu-latest
     needs: [test]
     if: success()
+    outputs:
+      new_version: ${{ steps.version.outputs.new_version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Grants permisions
+        run: chmod +x ./bin/version.sh
+
+      - name: Change version
+        id: version
+        run: echo "new_version=$(./bin/version.sh "${{ github.event.head_commit.message }}")" >> $GITHUB_OUTPUT
+
+      - name: Update version file
+        run: |
+          git config --global user.name 'diegomated1'
+          git config --global user.email 'diegocardwr@gmail.com'
+          git add .
+          git commit -am "chore: version ${{ steps.version.outputs.new_version }}"
+          git push
+      
       - name: Merge test -> main
         uses: devmasx/merge-branch@master
         with:
@@ -43,4 +60,29 @@ jobs:
           from_branch: test
           target_branch: main
           github_token: ${{ secrets.GITHUB_TOKEN }}
-      
+  
+  publish:
+    runs-on: ubuntu-latest
+    needs: [version]
+    if: success()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/mediafile-${{ github.event.repository.name }}:${{ needs.version.outputs.new_version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
