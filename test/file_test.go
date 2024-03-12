@@ -47,4 +47,19 @@ func TestFile(t *testing.T) {
 		t.Fatal("File content are not equal")
 	}
 
+	// Remove file
+
+	err = utils.DeleteFile(dir, "helloworld.txt")
+
+	if err != nil {
+		t.Fatalf("Cannot delete the file: %v", err)
+	}
+
+	// try get the file
+	file, _ = utils.GetFile(dir, "helloworld.txt")
+
+	if file != nil {
+		t.Fatalf("File not deleted: %v", err)
+	}
+
 }

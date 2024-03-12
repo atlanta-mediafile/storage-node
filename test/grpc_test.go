@@ -76,4 +76,27 @@ func TestDownloadFile(t *testing.T) {
 	if content != file_content {
 		t.Fatal("File content are not equal")
 	}
+
+	// DELETE FILE
+	deleteResponse, err := client.DeleteSingleFile(context.Background(), &pb.DeleteSingleFileRequest{
+		FileId: response.FileId,
+	})
+
+	if err != nil {
+		t.Fatalf("Failed to call DeleteSingleFile: %v", err)
+	}
+
+	if !deleteResponse.Done {
+		t.Fatalf("The file was not deleted")
+	}
+
+	// TRY GET THE FILE
+	file2, _ := client.GetSingleFile(context.Background(), &pb.GetSingleFileRequest{
+		FileId: response.FileId,
+	})
+
+	if file2 != nil {
+		t.Fatalf("File found, not deleted")
+	}
+
 }
