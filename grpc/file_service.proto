@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option go_package = "mediafile/storage_node/grpc/file_service/fileservice";
+option java_package = "com.mediafile.service.classes.generated.grpc";
+
+package fileservice;
+
+service FileService {
+
+    rpc GetSingleFile   (GetSingleFileRequest)      returns (GetSingleFileResponse){}
+    rpc UploadSingleFile(UploadSingleFileRequest)   returns (UploadSingleFileResponse){}
+    rpc DeleteSingleFile(DeleteSingleFileRequest)   returns (DeleteSingleFileResponse){}
+
+}
+
+message GetSingleFileRequest {
+    string fileId = 1;
+}
+
+message GetSingleFileResponse {
+    bytes file = 1;
+}
+
+message UploadSingleFileRequest {
+    bytes file = 1;
+}
+
+message UploadSingleFileResponse {
+    string fileId = 1;
+}
+
+message DeleteSingleFileRequest {
+    string fileId = 1;
+}
+
+message DeleteSingleFileResponse {
+    bool done = 1;
+}
