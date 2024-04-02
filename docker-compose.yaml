@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  storage_node:
+    image: diegomated1/mediafile-storage-node:latest
+    container_name: storage_node
+    restart: always
+    environment:
+      - storageLocation=/var/lib/mediafile/data
+      - name=node2
+      - bindHost=172.20.0.10
+      - maxStorage=1073741824
+    ports:
+      - "5010:5010"
+    volumes:
+      - mediafile_data:/var/lib/mediafile/data
+    networks:
+      node_cluster:
+        ipv4_address: 172.20.0.10
+
+networks:
+  node_cluster:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+volumes:
+  mediafile_data:
