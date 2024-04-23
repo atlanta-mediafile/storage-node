@@ -27,6 +27,7 @@ message UploadSingleFileRequest {
 
 message UploadSingleFileResponse {
     string fileId = 1;
+    string nodeIp = 2;
 }
 
 message DeleteSingleFileRequest {
