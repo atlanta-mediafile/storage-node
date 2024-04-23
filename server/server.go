@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"mediafile/storage_node/config"
 	pb "mediafile/storage_node/grpc"
 	"mediafile/storage_node/utils"
@@ -34,8 +35,11 @@ func (s *FileServiceServer) UploadSingleFile(context context.Context, request *p
 		return nil, err
 	}
 
+	nodeIp := fmt.Sprintf("%s:%d", s.node.BindHost, s.node.BindPort)
+
 	return &pb.UploadSingleFileResponse{
 		FileId: id.String(),
+		NodeIp: nodeIp,
 	}, nil
 }
 
